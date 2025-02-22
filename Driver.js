@@ -1,6 +1,13 @@
 // Drive ship in absence of real NMEA inputs
 
 var log = false;
+
+scriptName = "Driver";
+scriptVersion = 1.1;
+require("pluginVersion")("3.1.1");
+require("checkForUpdate")(scriptName, scriptVersion, 0, "https://raw.githubusercontent.com/antipole2/Driver/main/driver.JSON");
+
+
 Position = require("Position");
 // we construct the panel dynamically, so we can note where things are
 panel = [];
