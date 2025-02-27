@@ -17,3 +17,19 @@ Selecting the opposite tack will tack the boat.
 After changing the parameters, you need to click on one of the buttons to put the chnages into effect. 
 
 TIP: Driver can be run in its own console and used, for example, to experiment with or test the TackAdvisor and SendActiveRoute scripts running in their own consoles.
+
+== Installing the script
+
+This script needs JavaScript plugin v3.1.1 or later.
+
+1. Copy this URL to your clipboard (copy link - do not follow it) `https://raw.githubusercontent.com/antipole2/Driver/main/driver.js`
+2. In a JavaScript console choose `Load` and then `URL on clipboard`.  The script should be loaded into the script pane.
+3. Choose `Run` to start the script.
+
+If you want to run the script when not online, you will need to save it to a local file.  You can tick the _Auto run_ box to have the script start automatically.
+
+Alternatively, you can fork the repository if you want to evolve the script.
+
+== Support
+
+The script can be discussed in the Discussion forum above.
