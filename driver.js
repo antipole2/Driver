@@ -5,7 +5,7 @@ var log = false;
 scriptName = "Driver";
 scriptVersion = 1.9;
 require("pluginVersion")("3.1.1");
-require("checkForUpdate")(scriptName, scriptVersion, 1, "https://raw.githubusercontent.com/antipole2/Driver/refs/heads/next/version.JSON");
+require("checkForUpdate")(scriptName, scriptVersion, 0, "https://raw.githubusercontent.com/antipole2/Driver/refs/heads/Next/version.JSON");
 consoleName(scriptName);
 
 // modes of operation
