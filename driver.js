@@ -3,18 +3,29 @@
 var log = false;
 
 scriptName = "Driver";
-scriptVersion = 1.1;
+scriptVersion = 1.9;
 require("pluginVersion")("3.1.1");
-require("checkForUpdate")(scriptName, scriptVersion, 5, "https://raw.githubusercontent.com/antipole2/Driver/refs/heads/main/version.JSON");
+require("checkForUpdate")(scriptName, scriptVersion, 1, "https://raw.githubusercontent.com/antipole2/Driver/refs/heads/next/version.JSON");
 consoleName(scriptName);
+
+// modes of operation
+sb = "Standing by";
+compass = "Compass";	// go by compass and speed set in panel
+wind = "Wind"		// steer on tack relative to wind as set in panel
+dr = "Dead Reckon";	// use 
+// rmb = "RMB";		// Use RMB sentences
+var status = false;	// one of the above in operaion
 
 Position = require("Position");
 // we construct the panel dynamically, so we can note where things are
 panel = [];
 panel.push({type:"caption", value:"Simple ship and wind driver"});
 panel.push({type:"text", value:"Set desired parameters\nthen select action button to update"});
-panel.push({type:"text", value:"Status: Standing by"});
+panel.push({type:"text", value:"Status: " + sb});
 statusRow = panel.length-1;
+panel.push({type:"hLine"});
+panel.push({type:"button", label:[dr]});
+panel.push({type:"hLine"});
 panel.push({type:"slider", range:[0,10], value:5, width:300, label:"SOG knots"});
 SOGrow = panel.length-1;
 panel.push({type:"slider", range:[0,360], value:180, width:300, label:"COG " + String.fromCharCode(176)});
@@ -32,7 +43,8 @@ panel.push({type:"button", label:["    Port tack     ", "Starboard tack"]})
 panel.push({type:"hLine"});
 panel.push({type:"button", label:["Quit"]})
 
-var COG, SOG, windAngle2;
+var HDG, COG, STW, SOG, windAngle2
+var vector;	// vector sinc last position
 tick = 2;	// update every this number of seconds
 isActive = stopping = false;
 var positionLast = {latitude:0,longitude:0};
@@ -45,35 +57,42 @@ function panelAction(panelRead){
 	if (button == "Quit"){
 		stopScript("Quit");
 		}
-	SOG = panel[SOGrow].value = panelRead[SOGrow].value;
+	SOG = STW = panel[SOGrow].value = panelRead[SOGrow].value;
 	windDirection = panelRead[windDirectionRow].value;
 	windAngle = panelRead[windAngleRow].value;
 	windSpeed = panelRead[windSpeedRow].value;
-	COG = panel[COGrow].value = panelRead[COGrow].value;
+	HDG = COG = panel[COGrow].value = panelRead[COGrow].value;
 	nav = OCPNgetNavigation();
 	positionLast.latitude = nav.position.latitude;
 	positionLast.longitude = nav.position.longitude;
 	windAngle2 = windAngle - 180;
-//	if (windAngle2 < 0) windAngle2 += 360;
 	stopping = false;
 	if (button.search("Stop") >= 0){
+		OCPNonAllNMEA0183();
 		stopping = true;
 		isActive = false;
 		panel[panel.length-1].label = ["Quit"];		
 		status = "Standing by";
 		}
+	else if (button.search(dr) >= 0){
+		status = "Dead reckoning";
+		OCPNonNMEA0183(drData, "VHW");	// listen for speed and heading through water
+		}
 	else if (button.search("Compass") >= 0){
+		OCPNonAllNMEA0183();
 		status = "Steering compass course";
 		windAngle2 = windDirection - COG;
 		if (windAngle2 < 0) windAngle2 += 360;
 		}
 	else if (button.search("Starboard") >= 0){
+		OCPNonAllNMEA0183();
 		COG = windDirection - windAngle;
 		if (COG < 0) {COG += 360;}
 		windAngle2 = windAngle;
 		status = "On starboard tack";
 		}
 	else if (button.search("Port") >= 0){
+		OCPNonAllNMEA0183();
 		COG = windDirection + windAngle;
 		if (COG >= 360) {COG -= 360;}
 		windAngle2 = -windAngle;
@@ -97,7 +116,7 @@ function panelAction(panelRead){
 	onDialogue(panelAction, panel);
 	};
 
-function update(){
+function update(){	
 	positionNext = new Position(OCPNgetPositionPV(positionLast, vector));
 	if (!stopping) onSeconds(update, tick);
 	thisMoment = new Date();
@@ -119,3 +138,13 @@ function output(sentence){
 	if (log) print(sentence, "\n");
 	OCPNpushNMEA0183(sentence);
 	};
+
+function drData(data){
+	if (data.OK){
+		parts = data.result.split(",");
+		COG = parts[1];	// actually heading true
+		SOG = parts[3];	// actually speed through water knots
+		vector = {bearing: COG, distance: SOG*tick/(60*60)};
+		}
+	if (status == "Dead reckoning") OCPNonNMEA0183(drData, "VHW");	// listen again for speed and heading through water
+	}
