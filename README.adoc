@@ -1,7 +1,5 @@
 = Driver
 
-https://github.com/antipole2/JavaScripts-shared/blob/main/Driver/Driver.js[Driver.js]
-
 This is a simulator that can be used to drive the ship in the absence of actual NMEA inputs.
 
 It is an alternative to the ShipDriver plugin but does not use steering to gradually change course.
@@ -14,6 +12,40 @@ Selecting *Compass course* will then drive the boat along the selected course.  
 Alternatively, you can instead specify an angle to the wind and select *Port tack* or *Starboard tack*.  It will then calculate the required COG.
 Selecting the opposite tack will tack the boat.
 
-After changing the parameters, you need to click on one of the buttons to put the chnages into effect. 
+After changing the parameters, you need to click on one of the buttons to put the changes into effect. 
 
 TIP: Driver can be run in its own console and used, for example, to experiment with or test the TackAdvisor and SendActiveRoute scripts running in their own consoles.
+
+== Dead Reckoning Mode
+
+If you select Dead Reckon, the plugin will use received VHW sentences to get Water Speed and Heading and use those instead of the compass and speed setting in the panel.
+This can be used to plot a DR course in the absence of GPS data.
+
+WARNING: #This feature is work-in-progress that I knocked up in a hurry at home.  It has not been tested with actual VHW data.#
+
+IMPORTANT: The script achieves this by sending $JSGLL and $JSVTG sentences as they should be according to the dead reckoning.
+You need to block OpenCPN from seeing any conflicting sentences from your instrumentation.
+
+NOTE: At this stage, the script assumes true headings and does not allow for current or leeway.  It conflates COG with HDG and SOG with STW.
+
+NOTE: The script could be made to work with NMEA2000 course and speed inputs.
+
+TIP: You can raise any issues or join any discussion in this repository.
+
+== Installing the script
+
+This script needs JavaScript plugin v3.1.1 or later.
+
+NOTE: The following link is for the script in the Next branch
+
+1. Copy this URL to your clipboard (copy link - do not follow it) `https://raw.githubusercontent.com/antipole2/Driver/Next/driver.js`
+2. In a JavaScript console choose `Load` and then `URL on clipboard`.  The script should be loaded into the script pane.
+3. Choose `Run` to start the script.
+
+If you want to run the script when not online, you will need to save it to a local file.  You can tick the _Auto run_ box to have the script start automatically.
+
+Alternatively, you can fork the repository if you want to evolve the script.
+
+== Support
+
+The script can be discussed in the Discussion forum above.

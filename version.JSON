@@ -1,8 +1,9 @@
 {	"name":"Driver",
-	"version":"1.1",
-	"date":"22 Feb 2025",
-	"script": "https://raw.githubusercontent.com/antipole2/Driver/main/driver.js",
-	"new":"Moved to its own repo and includes update checking",
-	"pluginMinVersion": "3.1.1",	
-	"comment": "Don't forget to set same version number in the script too!"
+	"version":"1.9",
+	"date":"4 Mar 2025",
+	"script": "https://raw.githubusercontent.com/antipole2/Driver/Next/driver.js",
+	"new":"Initial cut",
+	"pluginMinVersion": "3.1.1",
+	"warning": "The script link is to the Next branch - change when moved to main",
+	"comment": "Don't forget to set the same version number in the script too!"
 }
